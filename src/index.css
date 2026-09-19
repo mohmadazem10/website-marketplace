@@ -48,17 +48,20 @@ body {
 
 .logo {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 10px;
   cursor: pointer;
 }
 
 .logo-icon {
-  font-size: 2rem;
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
 }
 
 .logo h1 {
-  font-size: 1.5rem;
+  font-size: 1.15rem;
   background: linear-gradient(135deg, #42d3c8, #7da7ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
