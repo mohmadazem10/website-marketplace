@@ -10,6 +10,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "server": "node backend/server.js",
+    "start": "node backend/server.js",
     "server:dev": "nodemon backend/server.js"
   },
   "dependencies": {

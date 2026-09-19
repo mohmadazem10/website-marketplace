@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: website-marketplace
+    runtime: node
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_API_URL
+        value: https://router.requesty.ai/v1/chat/completions
+      - key: AI_MODEL
+        value: google/gemma-4-31b-it
