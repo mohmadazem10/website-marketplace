@@ -48,16 +48,13 @@ body {
 
 .logo {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 10px;
   cursor: pointer;
 }
 
 .logo-icon {
-  width: 52px;
-  height: 52px;
-  object-fit: contain;
+  font-size: 2rem;
 }
 
 .logo h1 {

@@ -13,6 +13,7 @@ export const app = express()
 
 app.set('trust proxy', 1)
 const frontendDirectory = path.join(process.cwd(), 'dist')
+const publicDirectory = path.join(process.cwd(), 'public')
 const allowedOrigins = [
 	...clientOrigin.split(',').map((origin) => origin.trim()).filter(Boolean),
 	`http://localhost:${port}`,
@@ -30,6 +31,11 @@ app.use(cors({
 }))
 app.use(express.json())
 app.use('/uploads', express.static(uploadsDirectory))
+app.get('/favicon.jpg', (req, res) => {
+	res.set('Cache-Control', 'no-store, no-cache, must-revalidate')
+	return res.sendFile(path.join(publicDirectory, 'logo.jpg'))
+})
+app.use(express.static(publicDirectory))
 
 app.use('/api', healthRoutes)
 app.use('/api/auth', authRoutes)

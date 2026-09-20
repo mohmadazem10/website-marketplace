@@ -16,7 +16,7 @@ export default function Header({ cartCount, onCartClick, currentPage, onNavigate
     <header className="header">
       <div className="container header-content">
         <div className="logo" onClick={() => { window.scrollTo(0, 0); onNavigate('home') }}>
-          <img className="logo-icon" src="/marketplace-logo.svg" alt="" />
+          <span className="logo-icon">🚀</span>
           <h1>{t.siteName}</h1>
         </div>
         <nav className="nav">
