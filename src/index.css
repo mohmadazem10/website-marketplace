@@ -1618,6 +1618,13 @@ body {
   font-weight: 500;
 }
 
+.payment-demo-notice {
+  margin-top: 12px;
+  color: #aaa;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
 .payment-check {
   position: absolute;
   right: 14px;

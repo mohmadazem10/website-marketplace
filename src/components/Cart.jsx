@@ -106,6 +106,7 @@ export default function Cart({ cart, onRemoveFromCart, onClose, onCheckout, t })
                   </div>
                 ))}
               </div>
+              <p className="payment-demo-notice">{t.paymentDemoNotice}</p>
               {paymentError && <div className="auth-error" role="alert">⚠️ {paymentError}</div>}
             </div>
             <div className="cart-footer">

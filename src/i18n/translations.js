@@ -101,6 +101,7 @@ const translations = {
     processingPayment: 'جارٍ تأكيد الطلب...',
     paymentFailed: 'تعذر تأكيد الطلب. حاول مرة أخرى.',
     loginToCheckout: 'سجّل الدخول لإتمام الشراء.',
+    paymentDemoNotice: 'الدفع تجريبي: لن يتم خصم أي مبلغ حقيقي.',
     
     // About page
     aboutTitle: 'عن سوق المواقع',
@@ -385,6 +386,7 @@ const translations = {
     processingPayment: 'Confirming your order...',
     paymentFailed: 'Could not confirm the order. Please try again.',
     loginToCheckout: 'Sign in to complete your purchase.',
+    paymentDemoNotice: 'Demo payment only. No real money will be charged.',
     
     // About page
     aboutTitle: 'About Website Market',
@@ -667,6 +669,7 @@ const translations = {
     processingPayment: 'מאשר את ההזמנה...',
     paymentFailed: 'לא ניתן לאשר את ההזמנה. נסה שוב.',
     loginToCheckout: 'התחבר כדי להשלים את הרכישה.',
+    paymentDemoNotice: 'תשלום הדגמה בלבד. לא יחויב כסף אמיתי.',
     
     // About page
     aboutTitle: 'אודות שוק האתרים',

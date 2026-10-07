@@ -18,9 +18,13 @@ router.post('/orders', requireAuth, async (req, res, next) => {
 
     const orderItems = []
     for (const item of items) {
+      const hasValidProductId = typeof item?.id === 'string'
+        ? item.id.trim().length > 0
+        : typeof item?.id === 'number' && Number.isSafeInteger(item.id)
+
       if (
         !item ||
-        typeof item.id !== 'string' ||
+        !hasValidProductId ||
         typeof item.title !== 'string' ||
         typeof item.price !== 'number' ||
         !Number.isFinite(item.price) ||
@@ -31,7 +35,7 @@ router.post('/orders', requireAuth, async (req, res, next) => {
       }
 
       orderItems.push({
-        productId: item.id,
+        productId: String(item.id),
         title: item.title,
         price: item.price,
         templateName: typeof item.selectedTemplate?.name === 'string' ? item.selectedTemplate.name : '',
