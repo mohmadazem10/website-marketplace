@@ -5,11 +5,22 @@ function formatDate(value, lang) {
   return new Intl.DateTimeFormat(lang, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value))
 }
 
-export default function AdminPage({ token, t, lang }) {
+export default function AdminPage({ token, t, lang, defaultProducts, onProductCreated, onProductDeleted }) {
   const [orders, setOrders] = useState([])
   const [messages, setMessages] = useState([])
+  const [products, setProducts] = useState([])
+  const [deletedProductIds, setDeletedProductIds] = useState([])
+  const [productForm, setProductForm] = useState({
+    title: '',
+    description: '',
+    price: '',
+    category: '',
+    image: '🌐',
+    features: '',
+  })
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [isSavingProduct, setIsSavingProduct] = useState(false)
 
   useEffect(() => {
     let isActive = true
@@ -17,11 +28,14 @@ export default function AdminPage({ token, t, lang }) {
     Promise.all([
       apiRequest('/admin/orders', { headers: { Authorization: `Bearer ${token}` } }),
       apiRequest('/admin/messages', { headers: { Authorization: `Bearer ${token}` } }),
+      apiRequest('/admin/products', { headers: { Authorization: `Bearer ${token}` } }),
     ])
-      .then(([ordersResult, messagesResult]) => {
+      .then(([ordersResult, messagesResult, productsResult]) => {
         if (!isActive) return
         setOrders(ordersResult.orders)
         setMessages(messagesResult.messages)
+        setProducts(productsResult.products)
+        setDeletedProductIds(productsResult.deletedProductIds)
       })
       .catch((requestError) => {
         if (isActive) setError(requestError.message)
@@ -32,6 +46,56 @@ export default function AdminPage({ token, t, lang }) {
 
     return () => { isActive = false }
   }, [token])
+
+  const handleProductChange = (event) => {
+    const { name, value } = event.target
+    setProductForm((current) => ({ ...current, [name]: value }))
+  }
+
+  const handleProductSubmit = async (event) => {
+    event.preventDefault()
+    setError('')
+    setIsSavingProduct(true)
+    try {
+      const { product } = await apiRequest('/admin/products', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          ...productForm,
+          price: Number(productForm.price),
+          features: productForm.features.split(',').map((feature) => feature.trim()).filter(Boolean),
+        }),
+      })
+      setProducts((current) => [product, ...current])
+      onProductCreated(product)
+      setProductForm({ title: '', description: '', price: '', category: '', image: '🌐', features: '' })
+    } catch (requestError) {
+      setError(requestError.message)
+    } finally {
+      setIsSavingProduct(false)
+    }
+  }
+
+  const handleProductDelete = async (productId) => {
+    if (!window.confirm(t.adminDeleteConfirm)) return
+    setError('')
+    try {
+      await apiRequest(`/admin/products/${encodeURIComponent(productId)}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      setProducts((current) => current.filter((product) => String(product.id) !== String(productId)))
+      setDeletedProductIds((current) => [...new Set([...current, String(productId)])])
+      onProductDeleted(String(productId))
+    } catch (requestError) {
+      setError(requestError.message)
+    }
+  }
+
+  const listedProducts = [
+    ...defaultProducts.filter((product) => !deletedProductIds.includes(String(product.id))),
+    ...products,
+  ]
 
   return (
     <section className="page-section admin-page">
@@ -58,6 +122,49 @@ export default function AdminPage({ token, t, lang }) {
                 <p>{t.adminMessages}</p>
               </div>
             </div>
+
+            <section className="admin-panel">
+              <h3>{t.adminProductManagement}</h3>
+              <form className="admin-product-form" onSubmit={handleProductSubmit}>
+                <label>{t.adminProductTitle}
+                  <input name="title" value={productForm.title} onChange={handleProductChange} maxLength="160" required />
+                </label>
+                <label>{t.adminProductDescription}
+                  <textarea name="description" value={productForm.description} onChange={handleProductChange} maxLength="2000" rows="3" required />
+                </label>
+                <div className="admin-product-form-row">
+                  <label>{t.adminProductPrice}
+                    <input name="price" type="number" min="0" step="0.01" value={productForm.price} onChange={handleProductChange} required />
+                  </label>
+                  <label>{t.adminProductCategory}
+                    <input name="category" value={productForm.category} onChange={handleProductChange} maxLength="80" required />
+                  </label>
+                  <label>{t.adminProductIcon}
+                    <input name="image" value={productForm.image} onChange={handleProductChange} maxLength="16" />
+                  </label>
+                </div>
+                <label>{t.adminProductFeatures}
+                  <input name="features" value={productForm.features} onChange={handleProductChange} placeholder={t.adminProductFeaturesHint} />
+                </label>
+                <button className="btn-primary" type="submit" disabled={isSavingProduct}>
+                  {isSavingProduct ? t.adminProductSaving : t.adminProductAdd}
+                </button>
+              </form>
+              <div className="admin-product-list">
+                <h4>{t.adminProductList}</h4>
+                {listedProducts.map((product) => (
+                  <article className="admin-product-row" key={product.id}>
+                    <div>
+                      <strong>{product.image} {product.title}</strong>
+                      <span>{product.category} · $ {product.price}</span>
+                    </div>
+                    <button className="admin-delete-button" type="button" onClick={() => handleProductDelete(String(product.id))}>
+                      {t.adminProductDelete}
+                    </button>
+                  </article>
+                ))}
+              </div>
+            </section>
 
             <section className="admin-panel">
               <h3>{t.adminOrders}</h3>

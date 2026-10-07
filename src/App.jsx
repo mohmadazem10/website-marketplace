@@ -175,6 +175,8 @@ function App() {
   const [comparedWebsites, setComparedWebsites] = useState([])
   const [showComparison, setShowComparison] = useState(false)
   const [previewWebsite, setPreviewWebsite] = useState(null)
+  const [customProducts, setCustomProducts] = useState([])
+  const [deletedProductIds, setDeletedProductIds] = useState([])
   const [currentPage, setCurrentPage] = useState('auth')
   const [currentUser, setCurrentUser] = useState(() => {
     if (!localStorage.getItem('site-token')) return null
@@ -199,7 +201,20 @@ function App() {
       })
   }, [])
 
-  const websites = getWebsites(t, lang)
+  useEffect(() => {
+    apiRequest('/products')
+      .then(({ products, deletedProductIds: deletedIds }) => {
+        setCustomProducts(products)
+        setDeletedProductIds(deletedIds)
+      })
+      .catch((error) => showToast(error.message))
+  }, [])
+
+  const baseWebsites = getWebsites(t, lang)
+  const websites = [
+    ...baseWebsites.filter((website) => !deletedProductIds.includes(String(website.id))),
+    ...customProducts,
+  ]
   const allCategories = [...new Set(websites.map(w => w.category))]
 
   const filteredWebsites = activeCategory === ALL_KEY
@@ -288,6 +303,19 @@ function App() {
   const handleNavigate = (page) => {
     setCurrentPage(page)
     window.scrollTo(0, 0)
+  }
+
+  const handleProductCreated = (product) => {
+    setCustomProducts((current) => [product, ...current])
+  }
+
+  const handleProductDeleted = (productId) => {
+    if (baseWebsites.some((website) => String(website.id) === productId)) {
+      setDeletedProductIds((current) => [...new Set([...current, productId])])
+    } else {
+      setCustomProducts((current) => current.filter((product) => String(product.id) !== productId))
+    }
+    setComparedWebsites((current) => current.filter((website) => String(website.id) !== productId))
   }
 
   const handleLogin = (user, token) => {
@@ -395,7 +423,14 @@ function App() {
         />
       )}
       {currentPage === 'admin' && currentUser?.role === 'admin' && (
-        <AdminPage token={localStorage.getItem('site-token')} t={t} lang={lang} />
+        <AdminPage
+          token={localStorage.getItem('site-token')}
+          t={t}
+          lang={lang}
+          defaultProducts={baseWebsites}
+          onProductCreated={handleProductCreated}
+          onProductDeleted={handleProductDeleted}
+        />
       )}
       {currentPage === 'ai' && currentUser && <AIPage t={t} token={localStorage.getItem('site-token')} />}
 

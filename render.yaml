@@ -15,7 +15,7 @@ services:
       - key: CLIENT_ORIGIN
         sync: false
       - key: ADMIN_USERNAME
-        sync: false
+        value: master.ad
       - key: ADMIN_PASSWORD
         sync: false
       - key: AI_API_KEY

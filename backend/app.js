@@ -5,6 +5,7 @@ import { clientOrigin, port } from './config/env.js'
 import { uploadsDirectory } from './config/upload.js'
 import healthRoutes from './routes/health.routes.js'
 import authRoutes from './routes/auth.routes.js'
+import productsRoutes from './routes/products.routes.js'
 import ordersRoutes from './routes/orders.routes.js'
 import adminRoutes from './routes/admin.routes.js'
 import aiRoutes from './routes/ai.routes.js'
@@ -24,7 +25,21 @@ const allowedOrigins = [
 
 app.use(cors({
 	origin: (origin, callback) => {
-		if (!origin || allowedOrigins.includes(origin)) {
+		const isLocalDevelopmentOrigin = (() => {
+			if (process.env.NODE_ENV === 'production' || !origin) {
+				return false
+			}
+
+			try {
+				const parsedOrigin = new URL(origin)
+				return parsedOrigin.protocol === 'http:' &&
+					['localhost', '127.0.0.1', '[::1]'].includes(parsedOrigin.hostname)
+			} catch {
+				return false
+			}
+		})()
+
+		if (!origin || allowedOrigins.includes(origin) || isLocalDevelopmentOrigin) {
 			return callback(null, true)
 		}
 
@@ -41,6 +56,7 @@ app.use(express.static(publicDirectory))
 
 app.use('/api', healthRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api', productsRoutes)
 app.use('/api', ordersRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api', aiRoutes)

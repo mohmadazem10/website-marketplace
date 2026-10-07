@@ -4,6 +4,10 @@ import { adminUsername, adminPassword } from '../config/env.js'
 
 export async function ensureAdminAccount() {
   if (!adminUsername && !adminPassword) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('ADMIN_USERNAME and ADMIN_PASSWORD must be configured in production')
+    }
+
     console.warn('Admin account is not configured; set ADMIN_USERNAME and ADMIN_PASSWORD to create it')
     return
   }
