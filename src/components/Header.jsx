@@ -56,6 +56,7 @@ export default function Header({ cartCount, onCartClick, currentPage, onNavigate
               {showUserMenu && (
                 <div className="user-dropdown">
                   <button className="user-option" onClick={() => { setShowUserMenu(false); onNavigate('profile') }}>👤 {t.profile}</button>
+                  {user.role === 'admin' && <button className="user-option" onClick={() => { setShowUserMenu(false); onNavigate('admin') }}>🛡️ {t.adminDashboard}</button>}
                   <button className="user-option" onClick={() => { setShowUserMenu(false); onLogout() }}>🚪 {t.logout}</button>
                 </div>
               )}

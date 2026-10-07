@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import { app } from './app.js'
 import { port, mongoUri, jwtSecret } from './config/env.js'
+import { ensureAdminAccount } from './services/adminBootstrap.js'
 
 if (!mongoUri) {
   throw new Error('MONGODB_URI is required')
@@ -16,6 +17,8 @@ async function startServer() {
     serverSelectionTimeoutMS: 5000,
     socketTimeoutMS: 30000,
   })
+
+  await ensureAdminAccount()
 
   app.listen(port,'0.0.0.0', () => {
     console.log(`API server running at http://localhost:${port}`)

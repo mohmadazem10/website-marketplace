@@ -6,7 +6,19 @@ const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true, maxlength: 100 },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    password: { type: String, required: true, minlength: minimumPasswordLength, select: false },
+    username: { type: String, unique: true, sparse: true, lowercase: true, trim: true },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    password: {
+      type: String,
+      required: true,
+      select: false,
+      validate: {
+        validator(value) {
+          return value.length >= (this.role === 'admin' ? 8 : minimumPasswordLength)
+        },
+        message: `Password must be at least ${minimumPasswordLength} characters`,
+      },
+    },
     avatarUrl: { type: String, default: '' },
     cart: { type: [mongoose.Schema.Types.Mixed], default: [] },
   },

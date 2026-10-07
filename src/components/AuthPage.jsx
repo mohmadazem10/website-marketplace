@@ -49,7 +49,7 @@ export default function AuthPage({ t, onLogin }) {
       const path = mode === 'register' ? '/auth/register' : '/auth/login'
       const body = mode === 'register'
         ? { name: name.trim(), email: email.trim(), password }
-        : { email: email.trim(), password }
+        : { identifier: email.trim(), password }
       const data = await apiRequest(path, {
         method: 'POST',
         body: JSON.stringify(body),
@@ -97,14 +97,20 @@ export default function AuthPage({ t, onLogin }) {
             )}
 
             <div className="form-group">
-              <label>{t.email}</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.email} required />
+              <label>{mode === 'register' ? t.email : t.loginIdentifier}</label>
+              <input
+                type={mode === 'register' ? 'email' : 'text'}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={mode === 'register' ? t.email : t.loginIdentifier}
+                required
+              />
             </div>
 
             <div className="form-group auth-password-group">
               <label>{t.password}</label>
               <div className="auth-password-wrap">
-                <input type={pwdType} value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t.password} minLength={12} required />
+                <input type={pwdType} value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t.password} minLength={mode === 'register' ? 12 : undefined} required />
                 <button type="button" className="auth-eye" onClick={() => setShowPass(!showPass)} title={t.showPassword}>{showPass ? '🙈' : '👁️'}</button>
               </div>
               {mode === 'register' && <small className="password-hint">{t.passwordTooShort}</small>}

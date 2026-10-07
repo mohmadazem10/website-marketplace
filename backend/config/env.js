@@ -6,6 +6,8 @@ export const port = Number(process.env.PORT || 5000)
 export const mongoUri = process.env.MONGODB_URI
 export const jwtSecret = process.env.JWT_SECRET
 export const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173'
+export const adminUsername = process.env.ADMIN_USERNAME
+export const adminPassword = process.env.ADMIN_PASSWORD
 export const brightDataMcpUrl = process.env.BRIGHTDATA_MCP_URL
 export const aiApiKey = process.env.AI_API_KEY && !process.env.AI_API_KEY.startsWith('replace-with-') && process.env.AI_API_KEY !== 'your_api_key_here'
 	? process.env.AI_API_KEY

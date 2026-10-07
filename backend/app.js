@@ -5,6 +5,8 @@ import { clientOrigin, port } from './config/env.js'
 import { uploadsDirectory } from './config/upload.js'
 import healthRoutes from './routes/health.routes.js'
 import authRoutes from './routes/auth.routes.js'
+import ordersRoutes from './routes/orders.routes.js'
+import adminRoutes from './routes/admin.routes.js'
 import aiRoutes from './routes/ai.routes.js'
 import contactRoutes from './routes/contact.routes.js'
 import { errorHandler } from './middleware/errorHandler.js'
@@ -39,6 +41,8 @@ app.use(express.static(publicDirectory))
 
 app.use('/api', healthRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api', ordersRoutes)
+app.use('/api/admin', adminRoutes)
 app.use('/api', aiRoutes)
 app.use('/api', contactRoutes)
 

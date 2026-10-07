@@ -39,10 +39,18 @@ router.post('/register', authLimiter, async (req, res, next) => {
 
 router.post('/login', authLimiter, async (req, res, next) => {
   try {
-    const { email, password } = req.body
-    const user = await User.findOne({ email: email?.trim().toLowerCase() }).select('+password')
+    const { password } = req.body
+    const identifier = req.body?.identifier ?? req.body?.email
+    if (typeof identifier !== 'string' || typeof password !== 'string') {
+      return res.status(400).json({ message: 'Username or email and password are required' })
+    }
 
-    if (!user || !(await bcrypt.compare(password || '', user.password))) {
+    const normalizedIdentifier = identifier.trim().toLowerCase()
+    const user = await User.findOne({
+      $or: [{ email: normalizedIdentifier }, { username: normalizedIdentifier }],
+    }).select('+password')
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ message: 'Invalid email or password' })
     }
 

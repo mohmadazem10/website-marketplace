@@ -14,6 +14,7 @@ import AuthPage from './components/AuthPage'
 import ProfilePage from './components/ProfilePage'
 import AIPage from './components/AIPage'
 import InteractivePreview from './components/InteractivePreview'
+import AdminPage from './components/AdminPage'
 
 const ALL_KEY = '__all__'
 
@@ -188,7 +189,7 @@ function App() {
       .then(({ user }) => {
         setCurrentUser(user)
         setCart(Array.isArray(user.cart) ? user.cart : [])
-        setCurrentPage('home')
+        setCurrentPage(user.role === 'admin' ? 'admin' : 'home')
       })
       .catch(() => {
         localStorage.removeItem('site-token')
@@ -266,13 +267,22 @@ function App() {
     setTemplatePicker(null)
   }
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (cart.length === 0) return
-    const total = cart.reduce((sum, item) => sum + item.price, 0)
-    showToast(`✅ ${t.orderSuccess}\n${t.totalAmount}: $${total}`)
-    setCart([])
-    saveCart([])
-    setShowCart(false)
+    try {
+      const token = localStorage.getItem('site-token')
+      const { order } = await apiRequest('/orders', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ items: cart }),
+      })
+      showToast(`✅ ${t.orderSuccess}\n${t.totalAmount}: $${order.totalAmount}`)
+      setCart([])
+      await saveCart([])
+      setShowCart(false)
+    } catch (error) {
+      showToast(error.message)
+    }
   }
 
   const handleNavigate = (page) => {
@@ -285,7 +295,7 @@ function App() {
     localStorage.setItem('site-session', JSON.stringify(user))
     setCart(Array.isArray(user.cart) ? user.cart : [])
     setCurrentUser(user)
-    setCurrentPage('home')
+    setCurrentPage(user.role === 'admin' ? 'admin' : 'home')
     showToast(`👤 ${t.loggedInAs} ${user.name}`)
   }
 
@@ -383,6 +393,9 @@ function App() {
           onUserUpdate={handleUserUpdate}
           onAvatarChange={handleAvatarChange}
         />
+      )}
+      {currentPage === 'admin' && currentUser?.role === 'admin' && (
+        <AdminPage token={localStorage.getItem('site-token')} t={t} lang={lang} />
       )}
       {currentPage === 'ai' && currentUser && <AIPage t={t} token={localStorage.getItem('site-token')} />}
 

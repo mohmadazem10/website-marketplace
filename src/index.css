@@ -1776,7 +1776,120 @@ body {
     flex-direction: column;
     text-align: center;
   }
+}
 
+.admin-page .container {
+  max-width: 1000px;
+}
+
+.admin-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.admin-summary-card,
+.admin-panel {
+  padding: 22px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+}
+
+.admin-summary-card span {
+  display: block;
+  font-size: 1.4rem;
+}
+
+.admin-summary-card strong {
+  display: block;
+  color: #fff;
+  font-size: 1.8rem;
+  margin-top: 4px;
+}
+
+.admin-summary-card p,
+.admin-state {
+  color: #aaa;
+}
+
+.admin-panel {
+  margin-top: 18px;
+}
+
+.admin-panel h3 {
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.admin-record-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-record {
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+}
+
+.admin-record-heading,
+.admin-record-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.admin-record-heading strong,
+.admin-record-footer strong {
+  color: #fff;
+}
+
+.admin-record-heading span,
+.admin-record > p,
+.admin-record > span,
+.admin-record li {
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.admin-record > p {
+  margin-top: 6px;
+}
+
+.admin-record ul {
+  margin: 10px 20px;
+}
+
+.admin-record a {
+  color: #7da7ff;
+}
+
+.admin-record-footer {
+  margin-top: 12px;
+  color: #c4c7ff;
+}
+
+.admin-message-body {
+  white-space: pre-wrap;
+}
+
+@media (max-width: 600px) {
+  .admin-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-record-heading,
+  .admin-record-footer {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
   .hero-text h2 {
     font-size: 2rem;
   }
