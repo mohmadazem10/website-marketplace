@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs'
 import { User } from '../models/User.model.js'
 import { adminUsername, adminPassword } from '../config/env.js'
 
@@ -16,10 +17,16 @@ export async function ensureAdminAccount() {
     throw new Error('Admin username must be 3-40 characters and password must be at least 8 characters')
   }
 
-  const existingAdmin = await User.findOne({ username })
+  const existingAdmin = await User.findOne({ username }).select('+password')
   if (existingAdmin) {
     if (existingAdmin.role !== 'admin') {
       throw new Error(`Configured admin username "${username}" already belongs to a non-admin account`)
+    }
+
+    if (!(await bcrypt.compare(adminPassword, existingAdmin.password))) {
+      existingAdmin.password = adminPassword
+      await existingAdmin.save()
+      console.log(`Administrator password synchronized for "${username}"`)
     }
 
     return
