@@ -2,6 +2,27 @@ import { aiApiKey, aiApiUrl, aiModel } from '../config/env.js'
 
 export function basicAiReply(message) {
   const normalized = message.toLowerCase()
+  const orderContextLine = message.split('\n').find((line) => line.startsWith('بيانات الطلب: '))
+  if (orderContextLine) {
+    try {
+      const order = JSON.parse(orderContextLine.slice('بيانات الطلب: '.length))
+      const itemSummaries = (Array.isArray(order.items) ? order.items : []).map((item) => {
+        const template = item.selectedTemplate || {}
+        const details = [
+          `${item.title || 'موقع'} (${item.category || 'تصنيف غير محدد'})`,
+          item.description,
+          item.features?.length ? `الميزات: ${item.features.join('، ')}` : '',
+          template.name ? `القالب: ${template.name}${template.layout ? `، التخطيط: ${template.layout}` : ''}` : '',
+          template.colors?.length ? `الألوان: ${template.colors.join('، ')}` : '',
+        ].filter(Boolean)
+        return details.join(' — ')
+      })
+      return `ملخص الطلب: ${itemSummaries.join(' | ')}. الإجمالي: ${order.totalAmount ?? 'غير متوفر'}. طريقة الدفع: ${order.paymentMethod || 'غير محددة'}. الحالة: ${order.status || 'غير محددة'}. اسألني عن أي ميزة أو تفصيل محدد لأوضحه لك.`
+    } catch (error) {
+      console.error('Could not parse order context for AI fallback:', error.message)
+    }
+  }
+
   if (normalized.includes('مطعم') || normalized.includes('restaurant')) {
     return 'لموقع المطعم اختر قالب المطاعم، وركّز على القائمة الرقمية والحجز والطلب أونلاين والتوصيل.'
   }

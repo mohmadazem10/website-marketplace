@@ -1885,6 +1885,227 @@ body {
   white-space: pre-wrap;
 }
 
+.admin-order-toggle {
+  display: grid;
+  width: 100%;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: start;
+  font: inherit;
+}
+
+.admin-order-toggle > span:not(.admin-record-heading):not(.admin-record-footer) {
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.admin-order-expand {
+  color: #7da7ff !important;
+}
+
+.admin-order-details {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+.admin-order-item {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  background: rgba(0, 0, 0, 0.16);
+  border-radius: 10px;
+}
+
+.admin-order-item h4 {
+  color: #fff;
+}
+
+.admin-order-preview {
+  width: min(100%, 460px);
+  padding: 8px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.admin-order-preview svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.admin-order-colors {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-order-colors > span {
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+}
+
+.admin-order-colors small {
+  color: #aaa;
+}
+
+.order-ai-form {
+  display: grid;
+  gap: 9px;
+  padding: 14px;
+  border: 1px solid rgba(125, 167, 255, 0.25);
+  border-radius: 10px;
+  background: rgba(125, 167, 255, 0.06);
+}
+
+.order-ai-form > label {
+  color: #fff;
+  font-weight: 600;
+}
+
+.order-ai-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.order-ai-input-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
+  font: inherit;
+}
+
+.order-ai-input-row .btn-primary {
+  padding: 10px 16px;
+  white-space: nowrap;
+}
+
+.order-ai-answer {
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  white-space: pre-wrap;
+}
+
+.admin-order-page {
+  min-height: 60vh;
+}
+
+.admin-back-button {
+  margin-bottom: 18px;
+  padding: 10px 14px;
+  border: 1px solid rgba(125, 167, 255, 0.35);
+  border-radius: 8px;
+  background: rgba(125, 167, 255, 0.08);
+  color: #cbd5ff;
+  cursor: pointer;
+  font: inherit;
+}
+
+.admin-back-button:hover {
+  background: rgba(125, 167, 255, 0.16);
+}
+
+.order-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 12px;
+}
+
+.order-summary-grid > div {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.14);
+  overflow-wrap: anywhere;
+}
+
+.order-summary-grid span,
+.order-site-heading p,
+.order-site-description p,
+.order-site-features p,
+.order-design-details > p,
+.order-ai-panel > p {
+  color: #aeb9cc;
+}
+
+.order-summary-grid strong,
+.order-site-heading h4,
+.order-site-description h4,
+.order-site-features h4,
+.order-design-details h4 {
+  color: #fff;
+}
+
+.order-detail-site {
+  display: grid;
+  gap: 18px;
+}
+
+.order-site-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.order-site-heading > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.order-site-heading > strong {
+  color: #fff;
+  white-space: nowrap;
+}
+
+.order-site-icon {
+  font-size: 2rem;
+}
+
+.order-site-description,
+.order-site-features,
+.order-design-details {
+  display: grid;
+  gap: 8px;
+}
+
+.order-site-description p {
+  white-space: pre-wrap;
+}
+
+.order-site-features ul {
+  margin: 0;
+  padding-inline-start: 24px;
+  color: #cbd5e1;
+}
+
+.order-ai-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.order-ai-panel .order-ai-form {
+  margin-top: 4px;
+}
+
 .admin-product-form {
   display: grid;
   gap: 14px;
@@ -1973,6 +2194,10 @@ body {
 
   .admin-product-form-row {
     grid-template-columns: 1fr;
+  }
+
+  .order-ai-input-row {
+    flex-direction: column;
   }
 
   .admin-record-heading,

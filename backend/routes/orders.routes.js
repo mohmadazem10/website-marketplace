@@ -34,11 +34,32 @@ router.post('/orders', requireAuth, async (req, res, next) => {
         return res.status(400).json({ message: 'Order contains an invalid item' })
       }
 
+      const selectedTemplate = item.selectedTemplate ||
+        (Array.isArray(item.templates) ? item.templates[0] : null)
+
       orderItems.push({
         productId: String(item.id),
         title: item.title,
+        description: typeof item.description === 'string' ? item.description.slice(0, 2000) : '',
         price: item.price,
-        templateName: typeof item.selectedTemplate?.name === 'string' ? item.selectedTemplate.name : '',
+        category: typeof item.category === 'string' ? item.category.slice(0, 80) : '',
+        image: typeof item.image === 'string' ? item.image.slice(0, 16) : '🌐',
+        features: Array.isArray(item.features)
+          ? item.features.filter((feature) => typeof feature === 'string').slice(0, 12).map((feature) => feature.slice(0, 100))
+          : [],
+        selectedTemplate: {
+          id: typeof selectedTemplate?.id === 'string' ? selectedTemplate.id.slice(0, 100) : '',
+          name: typeof selectedTemplate?.name === 'string' ? selectedTemplate.name.slice(0, 100) : '',
+          previewStyle: typeof selectedTemplate?.previewStyle === 'string'
+            ? selectedTemplate.previewStyle.slice(0, 100)
+            : 'ecommerce-classic',
+          colors: Array.isArray(selectedTemplate?.colors)
+            ? selectedTemplate.colors
+              .filter((color) => typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color))
+              .slice(0, 5)
+            : [],
+          layout: typeof selectedTemplate?.layout === 'string' ? selectedTemplate.layout.slice(0, 120) : '',
+        },
       })
     }
 

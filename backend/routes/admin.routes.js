@@ -4,6 +4,8 @@ import { requireAuth, requireAdmin } from '../middleware/auth.js'
 import { ContactMessage } from '../models/ContactMessage.model.js'
 import { Order } from '../models/Order.model.js'
 import { Product } from '../models/Product.model.js'
+import { aiLimiter } from '../middleware/rateLimiters.js'
+import { handleAiChat } from '../services/aiService.js'
 
 const router = Router()
 
@@ -122,6 +124,50 @@ router.get('/orders', async (req, res, next) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 }).lean()
     return res.json({ orders })
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post('/orders/:orderId/explain', aiLimiter, async (req, res, next) => {
+  try {
+    const question = typeof req.body?.question === 'string' ? req.body.question.trim() : ''
+    if (!question) {
+      return res.status(400).json({ message: 'اكتب سؤالك عن الطلب أولًا' })
+    }
+    if (question.length > 1000) {
+      return res.status(400).json({ message: 'السؤال طويل جدًا' })
+    }
+
+    const order = await Order.findById(req.params.orderId).lean()
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' })
+    }
+
+    const orderContext = {
+      customer: order.customerName,
+      email: order.customerEmail,
+      paymentMethod: order.paymentMethod,
+      totalAmount: order.totalAmount,
+      status: order.status,
+      items: order.items.map((item) => ({
+        title: item.title,
+        description: item.description,
+        category: item.category,
+        price: item.price,
+        features: item.features,
+        selectedTemplate: item.selectedTemplate,
+      })),
+    }
+
+    req.body = {
+      message: [
+        'اشرح للمسؤول تفاصيل طلب العميل التالية وأجب عن سؤاله اعتمادًا على البيانات فقط. إذا لم تتوفر معلومة، وضّح أنها غير مسجلة. أجب بلغة السؤال.',
+        `بيانات الطلب: ${JSON.stringify(orderContext)}`,
+        `سؤال المسؤول: ${question}`,
+      ].join('\n'),
+    }
+    return handleAiChat(req, res)
   } catch (error) {
     next(error)
   }

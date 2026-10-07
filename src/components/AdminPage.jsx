@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { apiRequest } from '../api'
+import AdminOrderDetails from './AdminOrderDetails'
 
 function formatDate(value, lang) {
   return new Intl.DateTimeFormat(lang, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value))
@@ -22,6 +23,7 @@ export default function AdminPage({ token, t, lang, defaultProducts, onProductCr
   const [isLoading, setIsLoading] = useState(true)
   const [isSavingProduct, setIsSavingProduct] = useState(false)
   const [refreshCount, setRefreshCount] = useState(0)
+  const [selectedOrderId, setSelectedOrderId] = useState('')
 
   useEffect(() => {
     const interval = window.setInterval(() => setRefreshCount((count) => count + 1), 10000)
@@ -103,6 +105,19 @@ export default function AdminPage({ token, t, lang, defaultProducts, onProductCr
     ...products,
   ]
 
+  const selectedOrder = orders.find((order) => order._id === selectedOrderId)
+  if (selectedOrder) {
+    return (
+      <AdminOrderDetails
+        order={selectedOrder}
+        token={token}
+        t={t}
+        lang={lang}
+        onBack={() => setSelectedOrderId('')}
+      />
+    )
+  }
+
   return (
     <section className="page-section admin-page">
       <div className="container">
@@ -178,23 +193,22 @@ export default function AdminPage({ token, t, lang, defaultProducts, onProductCr
                 <div className="admin-record-list">
                   {orders.map((order) => (
                     <article className="admin-record" key={order._id}>
-                      <div className="admin-record-heading">
-                        <strong>{order.customerName}</strong>
-                        <span>{formatDate(order.createdAt, lang)}</span>
-                      </div>
-                      <p>{order.customerEmail} · {t.adminOrderNumber}: {order._id}</p>
-                      <ul>
-                        {order.items.map((item, index) => (
-                          <li key={`${item.productId}-${index}`}>
-                            {item.title}{item.templateName ? ` — ${item.templateName}` : ''} · $ {item.price}
-                          </li>
-                        ))}
-                      </ul>
-                      {order.paymentMethod && <p>{t.paymentMethod}: {t[order.paymentMethod] || order.paymentMethod}</p>}
-                      <div className="admin-record-footer">
-                        <span>{t.adminStatus}: {t[`orderStatus_${order.status}`] || order.status}</span>
-                        <strong>{t.totalAmount}: $ {order.totalAmount}</strong>
-                      </div>
+                      <button
+                        className="admin-order-toggle"
+                        type="button"
+                        onClick={() => setSelectedOrderId(order._id)}
+                      >
+                        <span className="admin-record-heading">
+                          <strong>{order.customerName}</strong>
+                          <span>{formatDate(order.createdAt, lang)}</span>
+                        </span>
+                        <span>{order.customerEmail} · {t.adminOrderNumber}: {order._id}</span>
+                        <span className="admin-record-footer">
+                          <span>{t.adminStatus}: {t[`orderStatus_${order.status}`] || order.status}</span>
+                          <strong>{t.totalAmount}: $ {order.totalAmount}</strong>
+                        </span>
+                        <span className="admin-order-expand">{t.orderShowDetails}</span>
+                      </button>
                     </article>
                   ))}
                 </div>
