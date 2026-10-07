@@ -97,6 +97,10 @@ const translations = {
     cashOnDelivery: 'الدفع عند الاستلام',
     completePayment: 'إتمام الدفع',
     paymentSuccess: 'تم الدفع بنجاح! شكراً لعملية الشراء.',
+    paymentMethod: 'طريقة الدفع',
+    processingPayment: 'جارٍ تأكيد الطلب...',
+    paymentFailed: 'تعذر تأكيد الطلب. حاول مرة أخرى.',
+    loginToCheckout: 'سجّل الدخول لإتمام الشراء.',
     
     // About page
     aboutTitle: 'عن سوق المواقع',
@@ -377,6 +381,10 @@ const translations = {
     cashOnDelivery: 'Cash on Delivery',
     completePayment: 'Complete Payment',
     paymentSuccess: 'Payment successful! Thank you for your purchase.',
+    paymentMethod: 'Payment method',
+    processingPayment: 'Confirming your order...',
+    paymentFailed: 'Could not confirm the order. Please try again.',
+    loginToCheckout: 'Sign in to complete your purchase.',
     
     // About page
     aboutTitle: 'About Website Market',
@@ -655,6 +663,10 @@ const translations = {
     cashOnDelivery: 'תשלום במזומן',
     completePayment: 'השלם תשלום',
     paymentSuccess: 'התשלום בוצע בהצלחה! תודה על רכישתך.',
+    paymentMethod: 'אמצעי תשלום',
+    processingPayment: 'מאשר את ההזמנה...',
+    paymentFailed: 'לא ניתן לאשר את ההזמנה. נסה שוב.',
+    loginToCheckout: 'התחבר כדי להשלים את הרכישה.',
     
     // About page
     aboutTitle: 'אודות שוק האתרים',

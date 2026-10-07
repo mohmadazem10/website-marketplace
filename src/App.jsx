@@ -282,22 +282,18 @@ function App() {
     setTemplatePicker(null)
   }
 
-  const handleCheckout = async () => {
-    if (cart.length === 0) return
-    try {
-      const token = localStorage.getItem('site-token')
-      const { order } = await apiRequest('/orders', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ items: cart }),
-      })
-      showToast(`✅ ${t.orderSuccess}\n${t.totalAmount}: $${order.totalAmount}`)
-      setCart([])
-      await saveCart([])
-      setShowCart(false)
-    } catch (error) {
-      showToast(error.message)
-    }
+  const handleCheckout = async (paymentMethod) => {
+    if (cart.length === 0) throw new Error(t.cartEmpty)
+    if (!localStorage.getItem('site-token')) throw new Error(t.loginToCheckout)
+    const token = localStorage.getItem('site-token')
+    const { order } = await apiRequest('/orders', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ items: cart, paymentMethod }),
+    })
+    showToast(`✅ ${t.orderSuccess}\n${t.totalAmount}: $${order.totalAmount}`)
+    setCart([])
+    await saveCart([])
   }
 
   const handleNavigate = (page) => {

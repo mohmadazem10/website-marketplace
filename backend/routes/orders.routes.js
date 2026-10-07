@@ -7,9 +7,13 @@ const router = Router()
 
 router.post('/orders', requireAuth, async (req, res, next) => {
   try {
-    const { items } = req.body || {}
+    const { items, paymentMethod } = req.body || {}
     if (!Array.isArray(items) || items.length === 0 || items.length > 50) {
       return res.status(400).json({ message: 'An order must contain between 1 and 50 items' })
+    }
+
+    if (!['creditCard', 'paypal', 'bankTransfer', 'cashOnDelivery'].includes(paymentMethod)) {
+      return res.status(400).json({ message: 'Select a valid payment method to complete the purchase' })
     }
 
     const orderItems = []
@@ -45,6 +49,7 @@ router.post('/orders', requireAuth, async (req, res, next) => {
       customerEmail: user.email,
       items: orderItems,
       totalAmount: orderItems.reduce((total, item) => total + item.price, 0),
+      paymentMethod,
     })
 
     return res.status(201).json({ order: { id: order._id, totalAmount: order.totalAmount, status: order.status } })

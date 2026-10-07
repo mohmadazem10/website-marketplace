@@ -21,6 +21,12 @@ export default function AdminPage({ token, t, lang, defaultProducts, onProductCr
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [isSavingProduct, setIsSavingProduct] = useState(false)
+  const [refreshCount, setRefreshCount] = useState(0)
+
+  useEffect(() => {
+    const interval = window.setInterval(() => setRefreshCount((count) => count + 1), 10000)
+    return () => window.clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     let isActive = true
@@ -45,7 +51,7 @@ export default function AdminPage({ token, t, lang, defaultProducts, onProductCr
       })
 
     return () => { isActive = false }
-  }, [token])
+  }, [token, refreshCount])
 
   const handleProductChange = (event) => {
     const { name, value } = event.target
@@ -184,6 +190,7 @@ export default function AdminPage({ token, t, lang, defaultProducts, onProductCr
                           </li>
                         ))}
                       </ul>
+                      {order.paymentMethod && <p>{t.paymentMethod}: {t[order.paymentMethod] || order.paymentMethod}</p>}
                       <div className="admin-record-footer">
                         <span>{t.adminStatus}: {t[`orderStatus_${order.status}`] || order.status}</span>
                         <strong>{t.totalAmount}: $ {order.totalAmount}</strong>

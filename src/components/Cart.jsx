@@ -5,6 +5,8 @@ export default function Cart({ cart, onRemoveFromCart, onClose, onCheckout, t })
   const [showPayment, setShowPayment] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState(null)
   const [paymentDone, setPaymentDone] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [paymentError, setPaymentError] = useState('')
 
   const total = cart.reduce((sum, item) => sum + item.price, 0)
 
@@ -15,15 +17,18 @@ export default function Cart({ cart, onRemoveFromCart, onClose, onCheckout, t })
     { id: 'cashOnDelivery', name: t.cashOnDelivery, icon: '💵' }
   ]
 
-  const handlePayment = () => {
-    if (!selectedPayment) return
-    setPaymentDone(true)
-    setTimeout(() => {
-      onCheckout()
-      setShowPayment(false)
-      setSelectedPayment(null)
-      setPaymentDone(false)
-    }, 2000)
+  const handlePayment = async () => {
+    if (!selectedPayment || isProcessing) return
+    setIsProcessing(true)
+    setPaymentError('')
+    try {
+      await onCheckout(selectedPayment)
+      setPaymentDone(true)
+    } catch (error) {
+      setPaymentError(error.message || t.paymentFailed)
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   return (
@@ -78,6 +83,7 @@ export default function Cart({ cart, onRemoveFromCart, onClose, onCheckout, t })
           <div className="cart-empty">
             <span className="cart-empty-icon" style={{ fontSize: '3rem' }}>✅</span>
             <p>{t.paymentSuccess}</p>
+            <button className="btn-primary" onClick={onClose}>{t.confirm}</button>
           </div>
         ) : (
           <>
@@ -100,15 +106,16 @@ export default function Cart({ cart, onRemoveFromCart, onClose, onCheckout, t })
                   </div>
                 ))}
               </div>
+              {paymentError && <div className="auth-error" role="alert">⚠️ {paymentError}</div>}
             </div>
             <div className="cart-footer">
               <button className="btn-cancel" onClick={() => setShowPayment(false)}>{t.cancel}</button>
               <button
                 className={`btn-checkout ${!selectedPayment ? 'disabled' : ''}`}
-                disabled={!selectedPayment}
+                disabled={!selectedPayment || isProcessing}
                 onClick={handlePayment}
               >
-                {t.completePayment}
+                {isProcessing ? t.processingPayment : t.completePayment}
               </button>
             </div>
           </>

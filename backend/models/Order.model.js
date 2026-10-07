@@ -17,6 +17,11 @@ const orderSchema = new mongoose.Schema(
     customerEmail: { type: String, required: true, lowercase: true, trim: true },
     items: { type: [orderItemSchema], required: true },
     totalAmount: { type: Number, required: true, min: 0 },
+    paymentMethod: {
+      type: String,
+      enum: ['creditCard', 'paypal', 'bankTransfer', 'cashOnDelivery'],
+      required: true,
+    },
     status: { type: String, enum: ['new', 'processing', 'completed', 'cancelled'], default: 'new' },
   },
   { timestamps: true },
